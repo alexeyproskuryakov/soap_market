@@ -1,0 +1,30 @@
+{% extends 'main.html' %}
+{% block main_data %}
+    <div class="span1">
+        <form action="/">
+            <button class="btn btn-inverse btn-small">
+                <i class="icon-chevron-left icon-white"></i>
+            </button>
+        </form>
+    </div>
+    <div class="span10" id="thumbs-container">
+        <div class="color-wrapper row" style="background-color: {{ color }};">
+            <div class='elements-container'>
+            {% for el in soups %}
+                    <div class="span2 thumb_wrapper">
+                    <img src="{{ el.image_url }}" class="img-rounded soup-image">
+
+                    <div class='mask'>
+                        <a href="#" class='thumb_a_cart'>
+                            <i class="icon-shopping-cart" onclick='add_to_cart({{ el.id }});'></i>
+                        </a>
+                        <a href="/description/{{ el.id }}" class='thumb_a_description'>
+                            <i class="icon-info-sign"></i>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

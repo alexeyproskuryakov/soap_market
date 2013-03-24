@@ -1,0 +1,9 @@
+Django==1.4.3
+PIL==1.1.7
+South==0.7.6
+django-paintstore==0.1.2
+djorm-ext-core==0.4.1
+djorm-ext-expressions==0.4.2
+djorm-ext-pgarray==0.4.1
+psycopg2==2.4.6
+wsgiref==0.1.2

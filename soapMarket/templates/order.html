@@ -1,0 +1,91 @@
+{% extends 'main.html' %}
+
+{% block main_data %}
+    <div class='span1'></div>
+    <div class='span4'>
+        <form action="{% url form_order %}" method="post">
+            {% csrf_token %}
+            {% for el in form %}
+                <div class="row">
+                    {% if el.errors %}
+                        <div class="text-error">{{ el.errors }}</div>
+                    {% endif %}
+                    {{ el.label_tag }}
+                    {{ el }}
+                </div>
+                <br>
+            {% endfor %}
+
+            <div class="row">
+                <button type="submit" class="btn btn-inverse btn-order">
+                    <i class="icon-arrow-right icon-white"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="span1">
+
+    </div>
+    <div class="span8">
+        {% for el in data %}
+            <div class="row order-record" style="background: {{ el.color }}">
+                <div class="span1">
+                    <img src="{{ el.image_url }}" class="soup-image img-rounded">
+                </div>
+                <div class="span3 offset2">
+                    <h5> {{ el.name }} </h5>
+                </div>
+                <div class="span1">
+                    <h5> {{ el.count }}X </h5>
+                </div>
+                <div class='span1'>
+                    <h5> {{ el.price }}</h5>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="row">
+            <div class="'span2 offset5">
+                <h4> Общая стоймость: {{ price }}</h4>
+                <h5 class="muted credit"> Оплата производится при получении</h5>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block cart %}
+{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var text_area = $('#id_where').on('click', function (event) {
+                $(this).select();
+            });
+
+            var cart_image = $('#cart-img-wrapper');
+            cart_image.hide();
+            var wrapper = $('<div/>');
+            wrapper.attr('id', 'when');
+            wrapper.attr('class', 'input-append datetime');
+            $('#id_when').wrap(wrapper);
+
+            var span = $('<span/>');
+            span.attr('class', 'add-on');
+
+            var i = $('<i/>');
+            i.attr('data-time-icon', 'icon-time');
+            i.attr('data-date-icon', 'icon-calendar');
+            i.appendTo(span);
+
+            wrapper = $('#when');
+            span.appendTo(wrapper);
+            var curr_date = new Date().getTime();
+            wrapper.datetimepicker({
+                language: 'ru',
+                pickSeconds: false,
+                startDate: new Date(new Date().getTime() + (3600 * 1000 * 2)),
+                format: 'dd.MM.yyyy hh:mm'
+            });
+
+        });
+    </script>
+{% endblock %}

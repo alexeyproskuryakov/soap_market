@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+{% block head %}
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Магазин мыла, ручной работы</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="магазин мыла ручной работы в санкт петербурге">
+        <meta name="keywords" content="мыло, ручной работы, спб, СПб, санкт-петербург">
+        <meta name="author" content="Алеша">
+
+        <script src="{{ STATIC_URL }}js/jquery-1.9.1.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.lightbox-0.5.js"></script>
+        <script src="{{ STATIC_URL }}js/bootstrap-datetimepicker.ru.js"></script>
+        <script src="{{ STATIC_URL }}js/bootstrap-datetimepicker.js"></script>
+        <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
+
+        <link href='http://fonts.googleapis.com/css?family=Lobster&subset=latin,cyrillic,cyrillic-ext' rel='stylesheet'
+              type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&subset=latin,cyrillic'
+              rel='stylesheet' type='text/css'>
+
+        <link href="{{ STATIC_URL }}spec.css" rel="stylesheet"/>
+        <link href="{{ STATIC_URL }}css/bootstrap-responsive.min.css" rel="stylesheet"/>
+        <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet"/>
+        <link href="{{ STATIC_URL }}css/bootstrap-datetimepicker.min.css" rel="stylesheet"/>
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery.lightbox-0.5.css" media="screen"/>
+    </head>
+{% endblock %}
+<body>
+{% block header %}
+    <header>
+        <div class="page-header">
+            <a href="/">
+                <h1>Мыло
+                    <small>ручной работы</small>
+                </h1>
+            </a>
+            {#            class=empty#}
+            <div id="cart-img-wrapper">
+                <img id="img-cart" src="{{ STATIC_URL }}img/big_cart.jpg">
+            </div>
+
+        </div>
+
+    </header>
+{% endblock %}
+
+{% csrf_token %}
+<div class="container-fluid">
+    <div class="row">
+
+        {% block main_data %}
+            <div class="span1">
+                <br>
+            </div>
+            <div class="span10">
+                {% for cat_el in categories %}
+                    <div class="row color-wrapper" color_name='{{ cat_el.color }}'
+                         style="background-color: {{ cat_el.color }};">
+
+                        {% for el in cat_el.soups %}
+                            <div class="span2 thumb_wrapper" soup_id='{{ el.id }}'>
+                                <img src="{{ el.image_url }}" class="soup-image img-rounded">
+
+                                <div class='mask'>
+                                    <div class="thumb_a_cart">
+                                        <i class="icon-shopping-cart" onclick='add_to_cart({{ el.id }});'></i>
+                                    </div>
+                                    <a href="/description/{{ el.id }}" class='thumb_a_description'>
+                                        <i class="icon-info-sign"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <div class="span1 goto-wrapper">
+                            <a href="/color/{{ cat_el.color_url }}">
+                                <button class="btn btn-inverse">
+                                    <i class="icon-chevron-right icon-white"></i>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        {% endblock %}
+
+        {% block cart %}
+            <div class="span2 offset1">
+                <div id="cart"></div>
+                <div id="empty-cart">
+                    <h5>
+                        Ну, же! Не стесняйся...
+                        Выбери что-нибудь для
+                        своего нежного личика.
+                    </h5>
+                </div>
+            </div>
+        {% endblock %}
+
+    </div>
+</div>
+<br>
+<br>
+
+<footer>
+    <div id='footer'>
+        <p id="me" class="muted credit">4k</p>
+    </div>
+</footer>
+{% block script %}
+    <script>
+        var csrftoken = $('input[name="csrfmiddlewaretoken"]').attr('value');
+
+        var form_data = function (data) {
+            data['csrfmiddlewaretoken'] = csrftoken;
+            return data;
+        };
+
+        var load_cart_content = function () {
+            var posting = $.ajax({type: 'POST', url: '/get_cart/', data: form_data({})});
+            posting.done(function (data) {
+                console.log(data);
+                load_images_to_cart(data['data'], data['price'])
+            });
+        };
+
+        var delete_from_cart = function (event) {
+            var id = event.data.id;
+            var posting = $.ajax({type: 'POST', url: '/delete_from_cart/', data: form_data({'position': id})});
+            posting.done(function (data) {
+                load_images_to_cart(data['data'], data['price'])
+            });
+        };
+
+        var add_to_cart = function (id) {
+            var posting = $.ajax({type: 'POST', url: '/add_to_cart/', data: form_data({'position': id})});
+            posting.done(function (data) {
+                console.log(data.data);
+                load_images_to_cart(data['data'], data['price'])
+            });
+        };
+
+        var load_images_to_cart = function (data, price) {
+            var rub = '<span class="ruble rel">p<span class="dot dborder">.</span></span>';
+            var cart = $('#cart');
+            var cart_image = $('#cart-img-wrapper');
+            var empty_cart = $('#empty-cart');
+            cart_image.hide();
+            empty_cart.show();
+            cart.empty();
+
+            data.forEach(function (x) {
+                var exist = cart.find('#' + x.pk + '_cart');
+                if (exist.length) {
+                    var exist_text = cart.find('#' + x.pk + '_cart_text');
+                    exist_text.text(x.count);
+                } else {
+                    var row = $('<div/>', {class: 'row'}).appendTo(cart);
+
+                    var cart_image_container = $('<div/>', {class: 'span1 image_container'}).appendTo(row);
+                    var image = $('<img/>', {src: x.image_url, class: 'cart_img img-rounded', id: x.pk + '_cart'}).appendTo(cart_image_container);
+                    var mask = $('<div/>', {class: 'c_mask'}).appendTo(cart_image_container);
+                    var delete_img = $('<i/>', {class: 'c_delete icon-remove', src: '{{ STATIC_URL }}img/close.png'}).appendTo(mask);
+                    delete_img.bind('click', {id: x.pk}, delete_from_cart);
+
+                    var cart_text_container = $('<div/>', {class: 'span1 text_container'}).appendTo(row);
+                    var counts = $('<p/>', {class: 'cart_element_text', id: x.pk + '_cart_text', text: x.count}).appendTo(cart_text_container);
+                }
+            });
+            if (price != 0) {
+                var price_el = $('<p/>', {class: 'lead text-center', id: 'price'});
+                price_el.html(price + rub);
+                price_el.appendTo(cart);
+                cart_image.show();
+                empty_cart.hide();
+                var form = $('<form/>', {action: '/form_order/'}).appendTo(cart);
+                var create_order = $('<button/>', {class: 'btn btn-inverse', text: 'Сделать заказ', type: 'submit'}).appendTo(form);
+            }else{
+                empty_cart.show();
+                cart_image.hide();
+            }
+
+        };
+
+
+        $(document).ready(function () {
+            load_cart_content();
+            //for light box
+            var main_image = $('#main-image');
+            if (main_image.length > 0) {
+                console.log('main image is loaded');
+                main_image.lightBox();
+            }
+        });
+
+    </script>
+{% endblock %}
+
+</body>
+</html>

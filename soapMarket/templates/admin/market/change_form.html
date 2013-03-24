@@ -1,0 +1,17 @@
+{% extends 'admin/change_form.html' %}
+{% block after_related_objects %}
+    <style type='text/css'>
+        .position {
+            display: inline-block;
+            margin-left: 5px;
+        }
+    </style>
+    <h3>Позиции для заказа</h3>
+    {% for soup in soups %}
+        <div class='position'>
+            <p>{{ soup.name }}</p><h5>{{ soup.count }}x</h5>
+            <img src={{ soup.image_url }}>
+
+        </div>
+    {% endfor %}
+{% endblock %}

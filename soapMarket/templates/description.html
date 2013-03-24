@@ -1,0 +1,86 @@
+{% extends 'main.html' %}
+{% block main_data %}
+    <div class="span1">
+        <style>
+            #color-circle {
+                color: {{ soup.color }};
+                background-color: {{ soup.color }};
+                width: 35px;
+                height: 35px;
+                -webkit-border-radius: 25px;
+                -moz-border-radius: 25px;
+                border-radius: 25px;
+                margin-left: 2%;
+            }
+
+            #description-wrapper {
+                background-color: {{ soup.color }};
+            }
+        </style>
+
+
+        <form action="/">
+            <button class="btn btn-inverse btn-small">
+                <i class="icon-chevron-left icon-white"></i>
+            </button>
+        </form>
+
+        <a href="/color/{{ soup.color_url }}">
+            <div id="color-circle">
+            </div>
+        </a>
+        <br>
+
+
+    </div>
+    <div class="span10" id="description-wrapper">
+        <div class="container-fluid">
+            <div class="row" id="description">
+                <div class="span4">
+                    <a id="main-image" href='{{ soup.image.url }}'>
+                        <img src="{{ soup.big_image_url }}" class="img-rounded" id="img-description">
+                    </a>
+                </div>
+                <div class="span5" id="description-content">
+                    <h1 id='soup-name'>{{ soup.name }}</h1>
+                    <br>
+
+                    <p id="soup-description">{{ soup.description }}</p>
+                    <button class='btn btn-inverse btn-large' id="btn-add-to-cart"
+                            onclick='add_to_cart({{ soup.id }});'>
+                        <i class="icon-shopping-cart icon-white"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span10">
+                    <br>
+                </div>
+            </div>
+            <div class="row" id="relevant-content">
+                <div class="span1"><br></div>
+                <div class='span8'>
+                    <div id="relevant-wrapper">
+                        {% for el in relevants %}
+
+                            <a href="/description/{{ el.id }}" class="relevant-element">
+                                <img src="{{ el.image_url }}" class="img-rounded">
+                            </a>
+
+
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="span1"><br></div>
+            </div>
+            <div class="row">
+                <div class="span10">
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+

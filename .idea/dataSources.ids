@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><component name="dataSourceStorage">
+  <data-source source="LOCAL" name="Django default" product="" version="" jdbc-version="" driver-name="" driver-version="" uuid="d5b62c20-1cdb-4a0a-9864-7354539f094f">
+    <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+    <jdbc-url>jdbc:postgresql:sm</jdbc-url>
+    <user-name>sm</user-name>
+    <user-password>dfd9dfc7</user-password>
+    <libraries>
+      <library>
+        <url>file://$USER_HOME$/.PyCharm20/config/jdbc-drivers/postgresql-driver-license.txt</url>
+      </library>
+      <library>
+        <url>jar://$USER_HOME$/.PyCharm20/config/jdbc-drivers/postgresql-9.1-901.jdbc3.jar!/</url>
+      </library>
+    </libraries>
+  </data-source>
+</component>
