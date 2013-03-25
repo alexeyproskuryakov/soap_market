@@ -92,9 +92,7 @@
                 <div id="cart"></div>
                 <div id="empty-cart">
                     <h5>
-                        Ну, же! Не стесняйся...
-                        Выбери что-нибудь для
-                        своего нежного личика.
+                        {{ when_cart_empty_words }}
                     </h5>
                 </div>
             </div>
@@ -178,7 +176,7 @@
                 empty_cart.hide();
                 var form = $('<form/>', {action: '/form_order/'}).appendTo(cart);
                 var create_order = $('<button/>', {class: 'btn btn-inverse', text: 'Сделать заказ', type: 'submit'}).appendTo(form);
-            }else{
+            } else {
                 empty_cart.show();
                 cart_image.hide();
             }
