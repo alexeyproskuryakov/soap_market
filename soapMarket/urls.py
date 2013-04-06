@@ -7,6 +7,9 @@ from market.views import *
 
 admin.autodiscover()
 
+
+
+
 urlpatterns = patterns('',
                        url(r'^admin/', include(admin.site.urls)),
 
@@ -23,6 +26,7 @@ urlpatterns = patterns('',
                        url(r'^add_to_cart/', add_to_cart_ajax_request),
                        url(r'^delete_from_cart/', delete_from_cart_ajax_request),
                        url(r'^get_cart/', get_cart_ajax_request),
+
 
 )
 

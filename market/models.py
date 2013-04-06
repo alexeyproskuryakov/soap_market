@@ -8,6 +8,7 @@ from djorm_pgarray import fields
 from paintstore.fields import ColorPickerField
 
 from contrib import *
+from market.managers import CartEmptyMessageManager
 
 
 class Soup(models.Model):
@@ -94,3 +95,18 @@ class Order(models.Model):
     who = models.IPAddressField(verbose_name=u'IP адрес заказ')
     client_phone = models.CharField(verbose_name=u'Телефон', max_length=11)
 
+
+class CartEmptyMessage(models.Model):
+    PAGES = (
+        ('M', 'Main'),
+        ('C', 'Color'),
+        ('D', 'Description'),
+        ('A', 'All'),
+    )
+
+    text = models.CharField(max_length='255', verbose_name=u'Текс сообщения')
+    page_name = models.CharField(max_length='1', verbose_name=u'Имя урла на котором она возможна', choices=PAGES)
+    objects = CartEmptyMessageManager()
+
+    def __unicode__(self):
+        return self.text

@@ -1,27 +1,33 @@
 # coding:utf-8
 import json
+from random import Random
 import uuid
 
+from django.contrib import messages
 from django.core.exceptions import ValidationError
-
 from django.http import HttpResponse, Http404
 from django.shortcuts import redirect
 from django.views.generic import TemplateView, FormView
-from djorm_expressions.base import SqlExpression, OR
 from django.db.models import *
+
+from djorm_expressions.base import SqlExpression, OR
+
 from market.forms import OrderForm
 from market.helpers import soups_from_basket_, soups_from_basket_json
-
-from market.models import Soup, Basket, Order
+from market.models import Soup, Basket, Order, CartEmptyMessage
 
 
 class MainPageView(TemplateView):
     template_name = 'main.html'
 
     def render_to_response(self, context, **response_kwargs):
+        message = CartEmptyMessage.objects.get_random(u'M')
+        if message:
+            messages.info(self.request, message.text)
+
         colors = Soup.objects.values('color').annotate(Count('id'))
         for color in colors:
-            soups = Soup.objects.filter(color=color['color'])[:4]
+            soups = Soup.objects.filter(color=color['color'])[:5]
             color['soups'] = soups
             color['color_url'] = color['color'][1:]
 
@@ -60,6 +66,7 @@ class DescriptionView(TemplateView):
 class OrderFormView(FormView):
     form_class = OrderForm
     template_name = "order.html"
+    success_url = '/thanks/'
 
     def render_to_response(self, context, **response_kwargs):
         session = self.request.COOKIES['sessionid']
@@ -89,7 +96,7 @@ class OrderFormView(FormView):
         )
         basket.ordered = True
         basket.save()
-        return redirect('/thanks/')
+        return redirect(self.success_url)
 
 
 class ThanksView(TemplateView):
@@ -165,3 +172,7 @@ def get_cart_ajax_request(request):
             return HttpResponse()
 
 
+def font_processor(request):
+    file_ = open(settings.HEADER_FONT + '.ttf')
+    result = HttpResponse(content=file_.read(), content_type='application/x-font-ttf')
+    return result

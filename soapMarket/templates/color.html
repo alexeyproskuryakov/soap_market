@@ -7,11 +7,10 @@
             </button>
         </form>
     </div>
-    <div class="span10" id="thumbs-container">
-        <div class="color-wrapper row" style="background-color: {{ color }};">
-            <div class='elements-container'>
+    <div class="span11" id="thumbs-container">
+        <div class="row color-wrapper" style="background-color: {{ color }};">
             {% for el in soups %}
-                    <div class="span2 thumb_wrapper">
+                <div class="span2 thumb_wrapper">
                     <img src="{{ el.image_url }}" class="img-rounded soup-image">
 
                     <div class='mask'>
@@ -24,7 +23,6 @@
                     </div>
                 </div>
             {% endfor %}
-            </div>
         </div>
     </div>
 {% endblock %}

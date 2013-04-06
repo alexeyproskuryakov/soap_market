@@ -7,7 +7,7 @@ import re
 
 from django import forms
 from django.contrib import admin
-from models import Basket, Comment, Order, Soup
+from models import Basket, Comment, Order, Soup, CartEmptyMessage
 from django.utils.translation import ugettext_lazy as _
 from django.forms import CharField, widgets, TextInput
 
@@ -68,6 +68,12 @@ class SoupModelAdmin(admin.ModelAdmin):
     )
 
 
+class CartEmptyMessageAdmin(admin.ModelAdmin):
+    list_display = (
+        'text', 'page_name'
+    )
+
+
 class OrderModelAdmin(admin.ModelAdmin):
     readonly_fields = (
         'client_phone',
@@ -112,4 +118,5 @@ class OrderModelAdmin(admin.ModelAdmin):
 
 admin.site.register(Order, OrderModelAdmin)
 admin.site.register(Soup, SoupModelAdmin)
+admin.site.register(CartEmptyMessage, CartEmptyMessageAdmin)
 admin.site.register(Comment)

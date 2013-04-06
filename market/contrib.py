@@ -1,18 +1,27 @@
 import os
 import Image
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 def get_thumbnail_url(image_url, size=150):
     thumbs_part = 'thumbs_' + str(size)
     image_url_parts = image_url.rsplit('/', 1)
     return image_url_parts[0] + '/' + thumbs_part + '/' + image_url_parts[1]
 
+
 def get_thumbnail_path(image_path, size=150):
     thumbs_dir = 'thumbs_' + str(size)
     dirname, filename = os.path.split(image_path)
     dirname = os.path.join(dirname, thumbs_dir)
     if not os.path.exists(dirname):
-        os.mkdir(dirname, 0755)
+        try:
+            os.mkdir(dirname, 0755)
+        except Exception as e:
+            logger.exception(e)
     return os.path.join(dirname, filename)
+
 
 def create_thumbnail(image_path, size=150):
     thumb_path = get_thumbnail_path(image_path, size)
@@ -21,7 +30,11 @@ def create_thumbnail(image_path, size=150):
     img.thumbnail((size, size), Image.ANTIALIAS)
     img.save(thumb_path)
 
+
 def delete_thumbnail(image_path, size=150):
     thumb_path = get_thumbnail_path(image_path, size)
     if os.path.exists(thumb_path):
-        os.remove(thumb_path)
+        try:
+            os.remove(thumb_path)
+        except Exception as e:
+            logger.exception(e)

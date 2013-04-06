@@ -15,11 +15,17 @@
         <script src="{{ STATIC_URL }}js/bootstrap-datetimepicker.js"></script>
         <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
 
+
+        <style>
+            @font-face {
+                font-family: 'header'; /* Гарнитура шрифта */
+                src: url('{{ STATIC_URL }}fonts/1-Bellevue-M-Bold.ttf'); /* Путь к файлу со шрифтом */
+            }
+        </style>
         <link href='http://fonts.googleapis.com/css?family=Lobster&subset=latin,cyrillic,cyrillic-ext' rel='stylesheet'
               type='text/css'>
         <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&subset=latin,cyrillic'
               rel='stylesheet' type='text/css'>
-
         <link href="{{ STATIC_URL }}spec.css" rel="stylesheet"/>
         <link href="{{ STATIC_URL }}css/bootstrap-responsive.min.css" rel="stylesheet"/>
         <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet"/>
@@ -30,19 +36,18 @@
 <body>
 {% block header %}
     <header>
-        <div class="page-header">
-            <a href="/">
-                <h1>Мыло
-                    <small>ручной работы</small>
-                </h1>
+        <div id="page-header">
+            <a href="/" class="header">
+                <h1>Soap </h1>
+                <span> hand made </span>
             </a>
-            {#            class=empty#}
+
             <div id="cart-img-wrapper">
                 <img id="img-cart" src="{{ STATIC_URL }}img/big_cart.jpg">
             </div>
-
         </div>
-
+        <br>
+        <br>
     </header>
 {% endblock %}
 
@@ -54,11 +59,9 @@
             <div class="span1">
                 <br>
             </div>
-            <div class="span10">
+            <div class="span11">
                 {% for cat_el in categories %}
-                    <div class="row color-wrapper" color_name='{{ cat_el.color }}'
-                         style="background-color: {{ cat_el.color }};">
-
+                    <div class="row color-wrapper" color_name='{{ cat_el.color }}' style="background-color: {{ cat_el.color }};">
                         {% for el in cat_el.soups %}
                             <div class="span2 thumb_wrapper" soup_id='{{ el.id }}'>
                                 <img src="{{ el.image_url }}" class="soup-image img-rounded">
@@ -89,10 +92,22 @@
 
         {% block cart %}
             <div class="span2 offset1">
+
                 <div id="cart"></div>
                 <div id="empty-cart">
                     <h5>
-                        {{ when_cart_empty_words }}
+                        {% block messages %}
+                            {% if messages %}
+
+                                {% for message in messages %}
+                                    <div{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+
+                            {% endif %}
+                        {% endblock %}
+
                     </h5>
                 </div>
             </div>
@@ -111,6 +126,8 @@
 {% block script %}
     <script>
         var csrftoken = $('input[name="csrfmiddlewaretoken"]').attr('value');
+        var cart_image = $('#cart-img-wrapper');
+        var empty_cart = $('#empty-cart');
 
         var form_data = function (data) {
             data['csrfmiddlewaretoken'] = csrftoken;
@@ -144,12 +161,9 @@
         var load_images_to_cart = function (data, price) {
             var rub = '<span class="ruble rel">p<span class="dot dborder">.</span></span>';
             var cart = $('#cart');
-            var cart_image = $('#cart-img-wrapper');
-            var empty_cart = $('#empty-cart');
-            cart_image.hide();
-            empty_cart.show();
             cart.empty();
-
+            cart_image.show();
+            empty_cart.hide();
             data.forEach(function (x) {
                 var exist = cart.find('#' + x.pk + '_cart');
                 if (exist.length) {
@@ -172,13 +186,13 @@
                 var price_el = $('<p/>', {class: 'lead text-center', id: 'price'});
                 price_el.html(price + rub);
                 price_el.appendTo(cart);
-                cart_image.show();
-                empty_cart.hide();
                 var form = $('<form/>', {action: '/form_order/'}).appendTo(cart);
                 var create_order = $('<button/>', {class: 'btn btn-inverse', text: 'Сделать заказ', type: 'submit'}).appendTo(form);
+                cart_image.show();
+                empty_cart.hide();
             } else {
-                empty_cart.show();
                 cart_image.hide();
+                empty_cart.show();
             }
 
         };
